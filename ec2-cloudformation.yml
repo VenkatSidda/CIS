@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Stack to Create an EC2 instance in a VPC
+Parameters:
+  ImageId:
+    Type: String
+    Description: 'Linux 2 AMI for Ireland eu-west1 Region'
+    Default: 'ami-0e07dcaca348a0e68'
+  VpcId:
+    Type: String
+    Description: VPC id
+    Default: vpc-06b242002b58d63b1
+  SubnetId:
+    Type: String
+    Description: Subnet in which to launch an EC2
+    Default: subnet-09cafc3ea300d2b66
+    AllowedValues:
+      - subnet-09cafc3ea300d2b66
+      - subnet-028b3eca26220ae09
+      - subnet-06cdf84bf3ae3301e
+  AvailabilityZone:
+    Type: String
+    Description: Availability Zone into which instance will launch
+    Default: ap-south-1a
+    AllowedValues:
+      - ap-south-1a 
+      - ap-south-1b
+      - ap-south-1c
+  InstanceType:
+    Type: String
+    Description: Choosing  t2 micro because it is free
+    Default: t2.micro
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+
+Resources:
+  DemoInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties: 
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SubnetId: !Ref SubnetId
+
+Outputs:
+  DemoInstanceId:
+    Description: Instance Id 
+    Value: !Ref DemoInstance
