@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Stack to create ec2 instance
+Parameters:
+
+  instanceTypeParameter:
+    Description: Select Instance Type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+      
+  environment:
+    Description: Select Instance Type
+    Type: String
+    Default: Dev
+    AllowedValues:
+      - Dev
+      - Cst
+      - Prod
+      
+  vpcId:
+    Type: String
+    Description: VPC id
+    Default: vpc-06b242002b58d63b1
+
+
+Resources:
+  testLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateData: 
+        IamInstanceProfile: 
+          Arn: arn:aws:iam::006692543351:instance-profile/AWSSMEC2
+        ImageId:  ami-0e07dcaca348a0e68
+        InstanceType: !Ref instanceTypeParameter
+      # KeyName: String
+      # NetworkInterfaces: 
+        #   NetworkInterface
+        MetadataOptions: 
+          HttpTokens: required
+        Monitoring: 
+           Enabled: true
+        SecurityGroupIds: 
+          - sg-04a584c4c0c0c988f
+        TagSpecifications:
+          - ResourceType: instance
+            Tags: 
+              - Key: Name
+                Value: Dev
+      TagSpecifications:
+        - ResourceType: launch-template
+          Tags: 
+            - Key: Name
+              Value: Dev
+
+          
+  testEC2Instance:
+    Type: AWS::EC2::Instance
+    DependsOn:
+        -   testLaunchTemplate
+    Properties:
+        LaunchTemplate:
+            LaunchTemplateId: !Ref testLaunchTemplate
+            Version: !GetAtt testLaunchTemplate.DefaultVersionNumber
+        SubnetId: subnet-09cafc3ea300d2b66
