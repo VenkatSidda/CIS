@@ -1,0 +1,14 @@
+Type: AWS::EC2::Instance
+Properties: 
+  IamInstanceProfile: String
+  ImageId: String
+  InstanceType: String
+  Monitoring: True
+  NetworkInterfaces: 
+    - NetworkInterface
+  PrivateIpAddress: String
+  SecurityGroupIds: 
+    - String
+  SubnetId: String
+  Tags: 
+    - Tag
