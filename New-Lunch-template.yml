@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description:
+Parameters:
+  InstanceTypeParameter:
+    Description: Select Instance Type
+    Type: String
+    Default: t2.small
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+  environemnet:
+    Description:
+    Type:
+    Default:
+    AllowedValues:
+      - dev
+      - qat
+      - cst
+      - prod
+
+  VpcId:
+    Type: String
+    Description: VPC id
+    Default: vpc-06b242002b58d63b1
+
+
+Resources:
+  instanceRole:
+    Type: AWS::IAM::Role
+    Properies:
+      AssumeRolePolicyDocument:
+        version:  2021-10-17
+        Statement:
+          - Effect: Allow
+            Principle:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+                -sts:AssumeRole
+      Description: IAM role used for our launch demo sesion
+      ManagedPolicyArns:
+        - Provide AmazonSSMManagedInstanceCore
+      Tags:
+        - Key: environament
+          Value:  !Ref environment   
+
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    DependsOn:
+      - instanceRole
+    Properties:
+      Roles:
+        - !Ref instanceRole
+
+
+  demoSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Statefull firewall by default allow all outbound traffic no inbout traffic
+      vpcID: !Ref vpcId
+      Tags:
+        - Key: environament
+          Value:  !Ref environment   
+
+
+  demoLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateData: 
+        IamInstanceProfile: !RefArr InstanceProfile.Arn
+        ImageId:
+        InstanceType: String
+      # KeyName: String
+        Monitoring: true
+        NetworkInterfaces: 
+           NetworkInterface
+        MetadataOptions: 
+          HttpTokens: required
+        SecurityGroupIds: 
+          - !GetAtt demoSecurityGroup.GroupId
+        TagSpecifications:
+          - ResourceType: Instance
+            Tags: 
+              - key: Name
+                Value: !Sub '${AWS::StackName}-${environment}'
+              - key: environment 
+                Value: !Ref environment
+      TagSpecifications:
+        - ResourceType: Instance
+          Tags: 
+            - key: Name
+              Value: !Sub '${AWS::StackName}-${environment}'
+            - key: environment 
+              Value: !Ref environment     
+Outputs:
+  launchTemplateId:
+    value:  !Ref  demoLaunchTemplate
+  Export:
+    Name: !Sub  '${AWS::StackName}-lt-id'
+
+
+    DepondOn:
+
+    Arn: GetAtt <Resource-logical-ID>.<attribute>
+    or
+    Name:
