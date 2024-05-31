@@ -1,0 +1,7 @@
+I wanted to provide an update regarding the unconfined controller failed issue we've been encountering as part of the RHEL 9 release. After reaching out to various teams, including Splunk and Qualys, they suggested contacting the Red Hat Support team.
+
+Following discussions with Prasanth, I raised a support case with the AWS team for SSM and CloudWatch. They provided a workaround by adding /bin/sh -c to the ExecStart directive in the startup scripts of those services, which successfully resolved the issue for them.
+
+I reached out to the AWS support team again for the remaining unconfined services. They suggested the same workaround for these services as well. After updating the startup scripts and manually verifying with ps -eZ, the services no longer show as unconfined.
+
+Additionally, most of the other failed controls have been resolved by referring to the CIS benchmarks guidelines. However, I have observed a new issue: after creating an instance from the latest AMI, some Ansible tasks triggered from the SSM document did not execute. This caused many controls to fail, even though tasks to fix these issues are already defined in the Ansible playbook.
