@@ -5,3 +5,5 @@ Following discussions with Prasanth, I raised a support case with the AWS team f
 I reached out to the AWS support team again for the remaining unconfined services. They suggested the same workaround for these services as well. After updating the startup scripts and manually verifying with ps -eZ, the services no longer show as unconfined.
 
 Additionally, most of the other failed controls have been resolved by referring to the CIS benchmarks guidelines. However, I have observed a new issue: after creating an instance from the latest AMI, some Ansible tasks triggered from the SSM document did not execute. This caused many controls to fail, even though tasks to fix these issues are already defined in the Ansible playbook.
+
+Additionally, most of the other failed controls have been resolved by referring to the CIS benchmarks guidelines. However, I have observed a new issue: after creating an instance from the latest AMI, the SSM document that triggers the Ansible playbook for post-instance creation configuration did not execute. As a result, many controls appear to have failed because the Ansible playbook that fixes these issues was not run.
